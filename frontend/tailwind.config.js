@@ -6,25 +6,40 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Manrope', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+      },
       colors: {
-        primary: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
-          950: '#1e1b4b',
+        canvas: '#F7F8FA',
+        surface: '#FFFFFF',
+        ink: {
+          primary: '#172033',
+          secondary: '#64748B',
+          muted: '#94A3B8',
         },
-        navy: {
-          800: '#1e293b',
-          900: '#0f172a',
-          950: '#020617',
+        accent: {
+          50: '#F0F5FA',
+          100: '#E1ECF5',
+          200: '#C3D9EB',
+          300: '#96BDDE',
+          400: '#6299CD',
+          500: '#315E91', // Specified primary accent
+          600: '#264D78',
+          700: '#1E3E61',
+          800: '#18314D',
+          900: '#14273E',
+        },
+        border: {
+          subtle: '#E2E8F0',
+          strong: '#CBD5E1',
         }
+      },
+      borderRadius: {
+        'sm': '4px',
+        DEFAULT: '6px',
+        'md': '8px',
+        'lg': '10px',
+        'xl': '12px',
       }
     },
   },

@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import {
   GraduationCap,
-  Briefcase,
   Lock,
   UserCheck,
   Eye,
   EyeOff,
   AlertCircle,
   Loader2,
-  CheckCircle2,
   ArrowRight
 } from 'lucide-react';
 
@@ -24,7 +22,6 @@ export const LoginPage = () => {
 
   const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const isStudent = role === 'STUDENT';
 
@@ -51,7 +48,6 @@ export const LoginPage = () => {
         password,
       });
 
-      // Role-based redirection
       if (data.role === 'STUDENT') {
         navigate('/student/dashboard', { replace: true });
       } else if (data.role === 'FACULTY') {
@@ -94,66 +90,62 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F7F8FA] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* Brand Header */}
-        <div className="flex justify-center">
-          <div className="w-14 h-14 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20">
-            <GraduationCap className="w-8 h-8" />
+        <Link to="/" className="inline-flex items-center gap-2 mb-6 text-[#172033] hover:opacity-90">
+          <div className="w-8 h-8 rounded-md bg-[#315E91] flex items-center justify-center text-white">
+            <GraduationCap className="w-5 h-5" />
           </div>
-        </div>
+          <span className="text-xl font-bold tracking-tight">ClassPilot</span>
+        </Link>
 
-        <h1 className="mt-4 text-center text-2xl font-bold tracking-tight text-slate-900">
-          ClassPilot
+        <h1 className="text-2xl font-bold text-[#172033] tracking-tight">
+          Portal Sign In
         </h1>
-        <p className="text-center text-xs font-semibold tracking-wide uppercase text-indigo-600 mt-1">
-          Smart Academic Management System
-        </p>
-        <p className="text-center text-sm text-slate-500 mt-0.5">
-          Learning. Managing. Growing.
+        <p className="text-sm text-[#64748B] mt-1">
+          Select your institutional role to access coursework, examinations, and records.
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
-        <div className="bg-white py-8 px-6 shadow-sm border border-slate-200 rounded-2xl sm:px-10">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-6 px-6 border border-[#E2E8F0] rounded-md shadow-sm sm:px-8">
           {/* Role Selection Tabs */}
-          <div className="mb-6">
-            <label className="block text-xs font-semibold uppercase text-slate-500 mb-2">
-              Select Your Portal
-            </label>
-            <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl border border-slate-200">
+          <div className="mb-5">
+            <div className="text-xs font-semibold text-[#64748B] mb-2">
+              Select Account Role
+            </div>
+            <div className="grid grid-cols-2 gap-2 p-1 bg-[#F1F5F9] rounded-md">
               <button
                 type="button"
                 onClick={() => handleRoleChange('STUDENT')}
-                className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                className={`py-2 text-sm font-semibold rounded transition-colors ${
                   isStudent
-                    ? 'bg-white text-indigo-600 shadow-sm border border-slate-200/80'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-[#315E91] shadow-sm'
+                    : 'text-[#64748B] hover:text-[#172033]'
                 }`}
               >
-                <GraduationCap className="w-4 h-4" />
-                <span>Student</span>
+                Student
               </button>
 
               <button
                 type="button"
                 onClick={() => handleRoleChange('FACULTY')}
-                className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                className={`py-2 text-sm font-semibold rounded transition-colors ${
                   !isStudent
-                    ? 'bg-white text-indigo-600 shadow-sm border border-slate-200/80'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-[#315E91] shadow-sm'
+                    : 'text-[#64748B] hover:text-[#172033]'
                 }`}
               >
-                <Briefcase className="w-4 h-4" />
-                <span>Faculty</span>
+                Faculty
               </button>
             </div>
           </div>
 
           {/* Error Banner */}
           {error && (
-            <div className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2.5">
-              <AlertCircle className="w-5 h-5 shrink-0 text-red-500 mt-0.5" />
+            <div className="mb-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
               <div className="flex-1 font-medium leading-snug">{error}</div>
             </div>
           )}
@@ -163,12 +155,12 @@ export const LoginPage = () => {
             <div>
               <label
                 htmlFor="identifier"
-                className="block text-sm font-medium text-slate-700 mb-1"
+                className="block text-sm font-medium text-[#172033] mb-1"
               >
                 {isStudent ? 'Roll Number' : 'Employee ID or Institutional Email'}
               </label>
-              <div className="relative rounded-lg shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#94A3B8]">
                   <UserCheck className="w-4 h-4" />
                 </div>
                 <input
@@ -180,22 +172,20 @@ export const LoginPage = () => {
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   placeholder={isStudent ? 'e.g. STU001' : 'e.g. FAC001 or faculty@classpilot.demo'}
-                  className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                  className="block w-full pl-9 pr-3 py-2 border border-[#E2E8F0] rounded-md text-sm text-[#172033] placeholder-[#94A3B8] focus:outline-none focus:ring-1 focus:ring-[#315E91] focus:border-[#315E91] transition-colors"
                 />
               </div>
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-slate-700"
-                >
-                  Password
-                </label>
-              </div>
-              <div className="relative rounded-lg shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-[#172033] mb-1"
+              >
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#94A3B8]">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -206,13 +196,13 @@ export const LoginPage = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="block w-full pl-10 pr-10 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                  placeholder="Enter account password"
+                  className="block w-full pl-9 pr-10 py-2 border border-[#E2E8F0] rounded-md text-sm text-[#172033] placeholder-[#94A3B8] focus:outline-none focus:ring-1 focus:ring-[#315E91] focus:border-[#315E91] transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#94A3B8] hover:text-[#64748B] focus:outline-none"
                   tabIndex={-1}
                 >
                   {showPassword ? (
@@ -228,16 +218,16 @@ export const LoginPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-semibold text-white bg-[#315E91] hover:bg-[#264D78] focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#315E91] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Signing In...</span>
+                    <span>Authenticating...</span>
                   </>
                 ) : (
                   <>
-                    <span>Sign In as {isStudent ? 'Student' : 'Faculty'}</span>
+                    <span>Sign In</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
@@ -245,23 +235,23 @@ export const LoginPage = () => {
             </div>
           </form>
 
-          {/* Quick Demo Credentials Fillers */}
-          <div className="mt-6 pt-5 border-t border-slate-200">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 text-center">
-              Quick Demo Accounts
+          {/* Quick Demo Credentials */}
+          <div className="mt-5 pt-4 border-t border-[#E2E8F0]">
+            <p className="text-xs font-semibold text-[#64748B] mb-2">
+              Demo Credentials (Pre-Seeded)
             </p>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={fillDemoStudent}
-                className="px-2.5 py-2 text-xs font-medium rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition-colors text-center"
+                className="px-2.5 py-1.5 text-xs font-medium rounded-md bg-[#F0F5FA] text-[#315E91] border border-[#C3D9EB] hover:bg-[#E1ECF5] transition-colors text-center"
               >
                 Fill Student (STU001)
               </button>
               <button
                 type="button"
                 onClick={fillDemoFaculty}
-                className="px-2.5 py-2 text-xs font-medium rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors text-center"
+                className="px-2.5 py-1.5 text-xs font-medium rounded-md bg-[#F0F5FA] text-[#315E91] border border-[#C3D9EB] hover:bg-[#E1ECF5] transition-colors text-center"
               >
                 Fill Faculty (FAC001)
               </button>
@@ -269,9 +259,11 @@ export const LoginPage = () => {
           </div>
         </div>
 
-        <p className="mt-4 text-center text-xs text-slate-400">
-          Phase 1 Foundation • Controlled Provisioning Only • No Public Registration
-        </p>
+        <div className="mt-4 text-center">
+          <Link to="/" className="text-xs text-[#64748B] hover:text-[#172033]">
+            ← Return to Overview
+          </Link>
+        </div>
       </div>
     </div>
   );

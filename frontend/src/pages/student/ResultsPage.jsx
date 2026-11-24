@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getMyResults } from '../../services/academicService';
 import DashboardLayout from '../../layouts/DashboardLayout';
-import { Award, CheckCircle, XCircle, TrendingUp, BookOpen, AlertCircle, Calendar } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const ResultsPage = () => {
@@ -36,158 +36,119 @@ const ResultsPage = () => {
   return (
     <DashboardLayout>
       {loading ? (
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+        <div className="flex flex-col items-center justify-center py-20 text-[#64748B]">
+          <Loader2 className="w-6 h-6 animate-spin text-[#315E91] mb-2" />
+          <p className="text-sm">Loading Academic Results...</p>
         </div>
       ) : (
         <div className="space-y-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Academic Performance & Results</h1>
-              <p className="text-gray-500 text-sm mt-1">
-                Official published examination marks, passing verification, and subject metrics.
+              <h1 className="text-2xl font-bold text-[#172033] tracking-tight">
+                Academic Performance & Results
+              </h1>
+              <p className="text-sm text-[#64748B] mt-1">
+                Official marks and grades published by the faculty.
               </p>
             </div>
             <Link
               to="/student/exams"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 font-semibold text-sm rounded-xl hover:bg-gray-50 transition shadow-sm"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-[#E2E8F0] text-[#172033] text-sm font-medium rounded-md hover:bg-slate-50 transition-colors shadow-sm"
             >
-              <Calendar className="w-4 h-4 text-indigo-600" />
-              View Exam Schedules
+              <span>View Examination Schedules</span>
             </Link>
           </div>
 
-          {/* Metrics Banner */}
+          {error && (
+            <div className="p-4 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          {/* Performance Summary Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-                <Award className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Published Exams</p>
-                <p className="text-2xl font-bold text-gray-900">{totalExams}</p>
-              </div>
+            <div className="bg-white border border-[#E2E8F0] rounded-md p-4">
+              <div className="text-xs font-medium text-[#64748B]">Evaluations Recorded</div>
+              <div className="text-2xl font-bold text-[#172033] mt-1">{totalExams}</div>
+              <div className="text-xs text-[#64748B] mt-1">Published exams</div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                <TrendingUp className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Overall Average</p>
-                <p className="text-2xl font-bold text-purple-600">{avgPercentage}%</p>
-              </div>
+            <div className="bg-white border border-[#E2E8F0] rounded-md p-4">
+              <div className="text-xs font-medium text-[#64748B]">Cleared Evaluations</div>
+              <div className="text-2xl font-bold text-[#172033] mt-1">{passedCount}</div>
+              <div className="text-xs text-[#64748B] mt-1">Satisfied passing threshold</div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                <CheckCircle className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Exams Passed</p>
-                <p className="text-2xl font-bold text-emerald-600">
-                  {passedCount} / {totalExams}
-                </p>
-              </div>
+            <div className="bg-white border border-[#E2E8F0] rounded-md p-4">
+              <div className="text-xs font-medium text-[#64748B]">Overall Average</div>
+              <div className="text-2xl font-bold text-[#172033] mt-1">{avgPercentage}%</div>
+              <div className="text-xs text-[#64748B] mt-1">Cumulative score across tests</div>
             </div>
           </div>
 
           {/* Results Table */}
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-900">Scorecard & Subject Breakdown</h2>
-              <span className="text-xs text-gray-500">Official Records</span>
-            </div>
-
-            {error ? (
-              <div className="p-8 text-center text-red-600 text-sm">
-                <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
-                {error}
-              </div>
-            ) : results.length === 0 ? (
-              <div className="p-12 text-center text-gray-500">
-                <Award className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                <h3 className="text-base font-semibold text-gray-800">No published results yet</h3>
-                <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
-                  Exam marks are pending evaluation or have not yet been published by faculty. Check back once results are officially released.
-                </p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-gray-50 text-gray-600 text-xs font-semibold uppercase tracking-wider border-b border-gray-200">
-                      <th className="py-3 px-6">Subject</th>
-                      <th className="py-3 px-6">Examination</th>
-                      <th className="py-3 px-6">Date</th>
-                      <th className="py-3 px-6 text-center">Marks Obtained</th>
-                      <th className="py-3 px-6 text-center">Percentage</th>
-                      <th className="py-3 px-6 text-center">Status</th>
-                      <th className="py-3 px-6">Remarks</th>
+          <div className="bg-white border border-[#E2E8F0] rounded-md overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-[#E2E8F0] bg-slate-50/50 text-xs font-semibold text-[#64748B]">
+                    <th className="py-2.5 px-4">Subject</th>
+                    <th className="py-2.5 px-4">Examination</th>
+                    <th className="py-2.5 px-4">Score</th>
+                    <th className="py-2.5 px-4">Percentage</th>
+                    <th className="py-2.5 px-4">Grade</th>
+                    <th className="py-2.5 px-4">Result</th>
+                    <th className="py-2.5 px-4">Teacher Feedback</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E8F0] text-sm">
+                  {results.length > 0 ? (
+                    results.map((res) => (
+                      <tr key={res.id} className="hover:bg-slate-50/60 transition-colors">
+                        <td className="py-3 px-4">
+                          <span className="font-semibold text-[#172033] block">{res.subject_name}</span>
+                          <span className="text-xs font-mono text-[#64748B]">{res.subject_code}</span>
+                        </td>
+                        <td className="py-3 px-4 font-medium text-[#172033]">
+                          {res.exam_name}
+                        </td>
+                        <td className="py-3 px-4 font-mono font-medium text-[#172033] text-xs">
+                          {res.marks_obtained} / {res.max_marks}
+                        </td>
+                        <td className="py-3 px-4 font-mono text-xs text-[#172033]">
+                          {res.percentage ? `${res.percentage.toFixed(1)}%` : '—'}
+                        </td>
+                        <td className="py-3 px-4 font-bold text-xs text-[#172033]">
+                          {res.grade || '—'}
+                        </td>
+                        <td className="py-3 px-4">
+                          <span
+                            className={`text-xs font-medium px-2 py-0.5 rounded border ${
+                              res.is_passed
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : 'bg-red-50 text-red-700 border-red-200'
+                            }`}
+                          >
+                            {res.is_passed ? 'Passed' : 'Needs Retake'}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-xs text-[#64748B] max-w-xs">
+                          {res.remarks || 'No remarks provided'}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="7" className="py-8 text-center text-xs text-[#64748B]">
+                        No published examination results available for your profile.
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 text-sm">
-                    {results.map((res) => {
-                      const examDate = new Date(res.exam_date);
-                      return (
-                        <tr key={res.examination_id} className="hover:bg-gray-50/70 transition">
-                          <td className="py-4 px-6">
-                            <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs font-mono font-medium mb-1">
-                              {res.subject_code}
-                            </span>
-                            <div className="font-semibold text-gray-900">{res.subject_name}</div>
-                          </td>
-                          <td className="py-4 px-6">
-                            <span className="font-medium text-gray-900 block">{res.exam_name}</span>
-                            <span className="text-xs text-gray-500">{res.exam_type}</span>
-                          </td>
-                          <td className="py-4 px-6 text-xs text-gray-600 whitespace-nowrap">
-                            {examDate.toLocaleDateString(undefined, {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            })}
-                          </td>
-                          <td className="py-4 px-6 text-center whitespace-nowrap">
-                            <span className="font-bold text-gray-900 text-base">{res.marks_obtained}</span>
-                            <span className="text-xs text-gray-400"> / {res.max_marks}</span>
-                            <span className="block text-[11px] text-gray-400">Pass: {res.passing_marks}</span>
-                          </td>
-                          <td className="py-4 px-6 text-center">
-                            <span className="font-bold text-gray-900">{res.percentage}%</span>
-                            <div className="w-16 bg-gray-100 h-1.5 rounded-full mx-auto mt-1 overflow-hidden">
-                              <div
-                                className={`h-full rounded-full ${
-                                  res.is_passed ? 'bg-emerald-500' : 'bg-red-500'
-                                }`}
-                                style={{ width: `${Math.min(res.percentage, 100)}%` }}
-                              ></div>
-                            </div>
-                          </td>
-                          <td className="py-4 px-6 text-center whitespace-nowrap">
-                            {res.is_passed ? (
-                              <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold border border-emerald-200">
-                                <CheckCircle className="w-3.5 h-3.5" />
-                                Passed
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-700 rounded-full text-xs font-bold border border-red-200">
-                                <XCircle className="w-3.5 h-3.5" />
-                                Failed
-                              </span>
-                            )}
-                          </td>
-                          <td className="py-4 px-6 text-xs text-gray-600 max-w-xs">
-                            {res.remarks || <span className="text-gray-400 italic">No remarks</span>}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

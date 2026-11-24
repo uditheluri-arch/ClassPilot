@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import ProtectedRoute from '../components/ProtectedRoute';
 
+import LandingPage from '../pages/LandingPage';
 import LoginPage from '../pages/auth/LoginPage';
 import StudentDashboard from '../pages/student/StudentDashboard';
 import MyClassPage from '../pages/student/MyClassPage';
@@ -63,8 +64,8 @@ const PublicLoginRoute = () => {
 export const AppRoutes = () => {
   return (
     <Routes>
-      {/* Root Route */}
-      <Route path="/" element={<RootRedirect />} />
+      {/* Root Route: Clean Academic Landing Page */}
+      <Route path="/" element={<LandingPage />} />
 
       {/* Authentication */}
       <Route path="/login" element={<PublicLoginRoute />} />

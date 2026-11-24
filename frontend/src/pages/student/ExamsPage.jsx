@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getStudentExams } from '../../services/academicService';
 import DashboardLayout from '../../layouts/DashboardLayout';
-import { Calendar, Clock, Award, FileText, CheckCircle, AlertCircle, BookOpen } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const ExamsPage = () => {
@@ -42,193 +42,145 @@ const ExamsPage = () => {
   return (
     <DashboardLayout>
       {loading ? (
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+        <div className="flex flex-col items-center justify-center py-20 text-[#64748B]">
+          <Loader2 className="w-6 h-6 animate-spin text-[#315E91] mb-2" />
+          <p className="text-sm">Loading Examination Schedules...</p>
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Page Header */}
+          {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Examinations & Schedules</h1>
-              <p className="text-gray-500 text-sm mt-1">
-                Track upcoming unit tests, mid-terms, and final exam schedules.
+              <h1 className="text-2xl font-bold text-[#172033] tracking-tight">
+                Examination Schedules
+              </h1>
+              <p className="text-sm text-[#64748B] mt-1">
+                Official test timetables, durations, and maximum marks for enrolled courses.
               </p>
             </div>
             <Link
               to="/student/results"
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-50 text-indigo-700 font-semibold text-sm rounded-xl hover:bg-indigo-100 transition"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-[#E2E8F0] text-[#172033] text-sm font-medium rounded-md hover:bg-slate-50 transition-colors shadow-sm"
             >
-              <Award className="w-4 h-4" />
-              View Published Results
+              <span>View Performance & Results</span>
             </Link>
           </div>
 
-          {/* Metric Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white p-5 rounded-xl border border-gray-200 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                <Calendar className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Total Scheduled</p>
-                <p className="text-2xl font-bold text-gray-900">{exams.length}</p>
-              </div>
+          {error && (
+            <div className="p-4 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+              <span>{error}</span>
             </div>
+          )}
 
-            <div className="bg-white p-5 rounded-xl border border-gray-200 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                <Clock className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Upcoming Exams</p>
-                <p className="text-2xl font-bold text-amber-600">{upcomingCount}</p>
-              </div>
-            </div>
-
-            <div className="bg-white p-5 rounded-xl border border-gray-200 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                <CheckCircle className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Completed</p>
-                <p className="text-2xl font-bold text-emerald-600">{completedCount}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex border-b border-gray-200 gap-2">
+          {/* Filter Tabs */}
+          <div className="flex items-center gap-2 border-b border-[#E2E8F0] pb-2">
             <button
               onClick={() => setActiveTab('ALL')}
-              className={`pb-3 px-3 text-sm font-semibold transition border-b-2 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${
                 activeTab === 'ALL'
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'bg-[#315E91] text-white'
+                  : 'text-[#64748B] hover:text-[#172033] hover:bg-slate-100'
               }`}
             >
-              All Exams ({exams.length})
+              All Evaluations ({exams.length})
             </button>
             <button
               onClick={() => setActiveTab('UPCOMING')}
-              className={`pb-3 px-3 text-sm font-semibold transition border-b-2 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${
                 activeTab === 'UPCOMING'
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'bg-[#315E91] text-white'
+                  : 'text-[#64748B] hover:text-[#172033] hover:bg-slate-100'
               }`}
             >
               Upcoming ({upcomingCount})
             </button>
             <button
               onClick={() => setActiveTab('COMPLETED')}
-              className={`pb-3 px-3 text-sm font-semibold transition border-b-2 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${
                 activeTab === 'COMPLETED'
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'bg-[#315E91] text-white'
+                  : 'text-[#64748B] hover:text-[#172033] hover:bg-slate-100'
               }`}
             >
               Completed ({completedCount})
             </button>
           </div>
 
-          {/* Exams Grid */}
-          {error ? (
-            <div className="bg-red-50 border border-red-200 p-6 rounded-xl text-center text-red-700">
-              {error}
+          {/* Examination Table */}
+          <div className="bg-white border border-[#E2E8F0] rounded-md overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-[#E2E8F0] bg-slate-50/50 text-xs font-semibold text-[#64748B]">
+                    <th className="py-2.5 px-4">Subject</th>
+                    <th className="py-2.5 px-4">Examination</th>
+                    <th className="py-2.5 px-4">Type</th>
+                    <th className="py-2.5 px-4">Date & Time</th>
+                    <th className="py-2.5 px-4">Duration</th>
+                    <th className="py-2.5 px-4">Max Marks</th>
+                    <th className="py-2.5 px-4">Pass Marks</th>
+                    <th className="py-2.5 px-4">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E8F0] text-sm">
+                  {filteredExams.length > 0 ? (
+                    filteredExams.map((exam) => {
+                      const upcoming = isUpcoming(exam.exam_date);
+                      return (
+                        <tr key={exam.id} className="hover:bg-slate-50/60 transition-colors">
+                          <td className="py-3 px-4">
+                            <span className="font-semibold text-[#172033] block">{exam.subject_name}</span>
+                            <span className="text-xs font-mono text-[#64748B]">{exam.subject_code}</span>
+                          </td>
+                          <td className="py-3 px-4 font-medium text-[#172033]">
+                            {exam.name}
+                          </td>
+                          <td className="py-3 px-4 text-xs text-[#64748B]">
+                            {exam.exam_type ? exam.exam_type.replace('_', ' ') : 'Unit Test'}
+                          </td>
+                          <td className="py-3 px-4">
+                            <span className="text-xs text-[#172033] font-medium block">
+                              {exam.exam_date ? new Date(exam.exam_date).toLocaleDateString() : 'TBD'}
+                            </span>
+                            <span className="text-xs text-[#64748B]">
+                              {exam.start_time || '10:00 AM'}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 text-xs text-[#64748B]">
+                            {exam.duration_minutes ? `${exam.duration_minutes} mins` : '90 mins'}
+                          </td>
+                          <td className="py-3 px-4 font-mono font-medium text-[#172033] text-xs">
+                            {exam.max_marks}
+                          </td>
+                          <td className="py-3 px-4 font-mono text-[#64748B] text-xs">
+                            {exam.passing_marks || (exam.max_marks * 0.4).toFixed(0)}
+                          </td>
+                          <td className="py-3 px-4">
+                            <span
+                              className={`text-xs font-medium px-2 py-0.5 rounded border ${
+                                upcoming
+                                  ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                  : 'bg-slate-100 text-slate-700 border-slate-200'
+                              }`}
+                            >
+                              {upcoming ? 'Scheduled' : 'Concluded'}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan="8" className="py-8 text-center text-xs text-[#64748B]">
+                        No examinations match the selected filter.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
-          ) : filteredExams.length === 0 ? (
-            <div className="bg-white border border-dashed border-gray-300 rounded-2xl p-12 text-center">
-              <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <h3 className="text-base font-semibold text-gray-800">No examinations found</h3>
-              <p className="text-sm text-gray-500 mt-1">There are no examinations in this category right now.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {filteredExams.map((exam) => {
-                const upcoming = isUpcoming(exam.exam_date);
-                const examDate = new Date(exam.exam_date);
-
-                return (
-                  <div
-                    key={exam.id}
-                    className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-md transition-shadow relative overflow-hidden"
-                  >
-                    <div
-                      className={`absolute top-0 left-0 right-0 h-1.5 ${
-                        upcoming ? 'bg-amber-500' : 'bg-emerald-500'
-                      }`}
-                    ></div>
-
-                    <div className="flex items-start justify-between gap-3 mb-3">
-                      <div>
-                        <span className="inline-block px-2.5 py-0.5 bg-indigo-50 text-indigo-700 rounded text-xs font-semibold uppercase tracking-wider mb-2">
-                          {exam.subject_code} • {exam.subject_name}
-                        </span>
-                        <h3 className="text-lg font-bold text-gray-900">{exam.name}</h3>
-                      </div>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shrink-0 ${
-                          upcoming
-                            ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                            : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        }`}
-                      >
-                        {upcoming ? 'Upcoming' : 'Completed'}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 my-4 bg-gray-50 p-3.5 rounded-xl text-xs">
-                      <div>
-                        <span className="text-gray-500 block mb-0.5">Date & Time</span>
-                        <span className="font-semibold text-gray-800">
-                          {examDate.toLocaleDateString(undefined, {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                          })}
-                          {exam.start_time && ` at ${exam.start_time}`}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500 block mb-0.5">Duration</span>
-                        <span className="font-semibold text-gray-800">{exam.duration_minutes} Mins</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500 block mb-0.5">Max Marks</span>
-                        <span className="font-semibold text-gray-800">{exam.max_marks} pts</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500 block mb-0.5">Passing Marks</span>
-                        <span className="font-semibold text-gray-800">{exam.passing_marks} pts</span>
-                      </div>
-                    </div>
-
-                    {exam.instructions && (
-                      <p className="text-xs text-gray-600 bg-blue-50/60 border border-blue-100 p-2.5 rounded-lg mb-4">
-                        <span className="font-semibold text-blue-900">Instructions: </span>
-                        {exam.instructions}
-                      </p>
-                    )}
-
-                    <div className="flex items-center justify-between pt-2 border-t border-gray-100 text-xs text-gray-500">
-                      <span>Exam Type: <strong className="text-gray-700">{exam.exam_type}</strong></span>
-                      {exam.is_published ? (
-                        <Link
-                          to="/student/results"
-                          className="font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
-                        >
-                          <Award className="w-3.5 h-3.5" />
-                          Results Published
-                        </Link>
-                      ) : (
-                        <span className="text-gray-400">Results Pending</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          </div>
         </div>
       )}
     </DashboardLayout>
