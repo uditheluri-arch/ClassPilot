@@ -299,13 +299,13 @@ docker compose down
 - **Node.js 18+**
 - **PostgreSQL 14+**
 
-#### 1. Start PostgreSQL Cluster
+#### 1. Start PostgreSQL Cluster (Port 5433)
 ```powershell
-# Using the dedicated ClassPilot PostgreSQL cluster on port 5433:
-& "C:\Program Files\PostgreSQL\18\bin\postgres.exe" -D ".\backend\pgdata" -p 5433
+# One-click safe launcher (checks port 5433, prevents duplicates):
+.\start-db.ps1
 
-# Or if you use standard local PostgreSQL on port 5432:
-# Update backend/.env DATABASE_URL accordingly.
+# Or manual command:
+& "C:\Program Files\PostgreSQL\18\bin\postgres.exe" -D ".\backend\pgdata" -p 5433 -h 127.0.0.1
 ```
 
 #### 2. Start the Backend API
@@ -336,7 +336,47 @@ Open your browser at: **`http://localhost:5173`**
 
 ---
 
-## 8. Automated Test Suite
+## 8. pgAdmin 4 Connection Guide
+
+You can inspect and manage the ClassPilot database using pgAdmin 4 with the following configuration:
+
+### Connection Settings
+
+1. Open **pgAdmin 4**.
+2. Right-click **Servers** in the Object Explorer and select **Register** → **Server...**
+3. In the **General** tab:
+   - **Name:** `ClassPilot Database`
+4. In the **Connection** tab:
+   - **Host name/address:** `127.0.0.1`
+   - **Port:** `5433` *(Note: ClassPilot runs on 5433 to avoid conflict with standard 5432)*
+   - **Maintenance database:** `classpilot_db`
+   - **Username:** `postgres`
+   - **Password:** *(Enter the password configured in `backend/.env`)*
+   - **Save password?** Checked (optional, for convenience)
+5. Click **Save**.
+
+### Navigating Database Tables
+
+In the pgAdmin 4 Object Explorer (left sidebar), expand the hierarchy:
+```text
+Servers
+ └── ClassPilot Database
+      └── Databases
+           └── classpilot_db
+                └── Schemas
+                     └── public
+                          └── Tables (13 tables)
+```
+
+### Safely Inspecting Table Data
+- To view records safely without modifying schema or running write operations:
+  - Right-click any table (e.g., `students`, `classes`, `examinations`, `users`)
+  - Select **View/Edit Data** → **All Rows** (or **First 100 Rows**)
+- This executes a read-only query (`SELECT * FROM public.<table_name> LIMIT 100;`), allowing safe inspection of existing rows without risk of accidental data modification.
+
+---
+
+## 9. Automated Test Suite
 
 ClassPilot includes a test suite covering authentication, RBAC boundaries, academic structures, examination workflows, and assignment lifecycle.
 

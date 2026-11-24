@@ -8,8 +8,7 @@ Set-Location "$scriptDir\backend"
 $pgReady = & "C:\Program Files\PostgreSQL\18\bin\pg_isready.exe" -h 127.0.0.1 -p 5433 2>&1
 if ($LASTEXITCODE -ne 0) {
     Write-Host "[1/2] Starting ClassPilot PostgreSQL cluster on port 5433..." -ForegroundColor Cyan
-    Start-Process -FilePath "C:\Program Files\PostgreSQL\18\bin\postgres.exe" -ArgumentList "-D `"$scriptDir\backend\pgdata`" -p 5433" -WindowStyle Hidden
-    Start-Sleep -Seconds 2
+    & "$scriptDir\start-db.ps1"
 } else {
     Write-Host "[1/2] PostgreSQL cluster on port 5433 is active." -ForegroundColor Green
 }
